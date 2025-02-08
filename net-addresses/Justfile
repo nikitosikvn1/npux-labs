@@ -1,0 +1,5 @@
+test:
+    cargo test --tests -- --show-output
+
+test-all:
+    cargo test --tests -- --show-output --include-ignored
