@@ -8,7 +8,11 @@ use libc::{c_char, c_int, socklen_t};
 const NI_MAXHOST: usize = 1025;
 const NI_MAXSERV: usize = 32;
 
-/// Resolves a socket address to a node name and a service name.
+/// Resolves a socket address to a node (host) name and a service name.
+///
+/// This function is a safe Rust wrapper around the system call [`libc::getnameinfo`].
+/// It takes a socket address (either IPv4 or IPv6) and attempts to resolve it
+/// to a host name and a service name.
 ///
 /// See: https://pubs.opengroup.org/onlinepubs/009604599/functions/getnameinfo.html
 pub fn getnameinfo(sock: impl Into<SocketAddr>, flags: i32) -> io::Result<(String, String)> {
