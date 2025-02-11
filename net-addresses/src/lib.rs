@@ -3,6 +3,9 @@
 pub mod getnameinfo;
 pub mod getaddrinfo;
 
+pub use getnameinfo::getnameinfo;
+pub use getaddrinfo::getaddrinfo;
+
 use std::ffi::CStr;
 use std::io::{Error, ErrorKind};
 
