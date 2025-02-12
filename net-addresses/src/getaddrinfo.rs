@@ -205,6 +205,8 @@ pub struct AddrInfo {
 // TODO: Display a set of flags as a list of flag names
 impl fmt::Debug for AddrInfo {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let (domain, service) = crate::getnameinfo(self.socket_addr, 0).map_err(|_| fmt::Error)?;
+
         f.debug_struct("AddrInfo")
             .field("flags", &format_args!("{:#x}", self.flags))
             .field("family", &self.family)
@@ -212,6 +214,8 @@ impl fmt::Debug for AddrInfo {
             .field("protocol", &self.protocol)
             .field("socket_addr", &self.socket_addr)
             .field("canonname", &self.canonname.as_deref().unwrap_or("None"))
+            .field("domain", &domain)
+            .field("service", &service)
             .finish()
     }
 }
@@ -396,7 +400,9 @@ mod tests {
             socktype: SOCK_STREAM (1), \
             protocol: IPPROTO_IP (0), \
             socket_addr: 127.0.0.1:80, \
-            canonname: \"localhost\" }";
+            canonname: \"localhost\", \
+            domain: \"localhost\", \
+            service: \"http\" }";
         // WHEN + THEN
         assert_eq!(format!("{:?}", addrinfo), expected_debug_output);
     }
