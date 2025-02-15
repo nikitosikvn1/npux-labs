@@ -1,0 +1,11 @@
+[package]
+name = "tcp-server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5.29", features = ["derive"] }
+libc = "0.2.169"
+prost = "0.13.5"
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
