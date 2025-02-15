@@ -9,3 +9,6 @@ libc = "0.2.169"
 prost = "0.13.5"
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+
+[build-dependencies]
+prost-build = "0.13.5"
