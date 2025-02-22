@@ -1,6 +1,7 @@
-use std::thread;
+use std::{thread, mem, cmp};
 use std::sync::{mpsc, Arc, Mutex};
 use std::panic::{self, AssertUnwindSafe};
+use libc::{cpu_set_t, CPU_SETSIZE, CPU_ISSET, _SC_NPROCESSORS_ONLN};
 
 type Job = Box<dyn FnOnce() + Send + 'static>;
 
@@ -38,7 +39,8 @@ impl ThreadPool {
 
 impl Default for ThreadPool {
     fn default() -> Self {
-        Self::new(crate::get_num_cpus())
+        // Use the number of logical CPUs as the default size.
+        Self::new(get_num_cpus())
     }
 }
 
@@ -102,4 +104,17 @@ impl Worker {
             }
         }
     }
+}
+
+fn get_num_cpus() -> usize {
+    let mut set: cpu_set_t = unsafe { mem::zeroed() };
+
+    if unsafe { libc::sched_getaffinity(0, mem::size_of::<cpu_set_t>(), &mut set) } == 0 {
+        return (0..CPU_SETSIZE as usize)
+            .filter(|&i| unsafe { CPU_ISSET(i, &set) })
+            .count();
+    }
+    let count: i64 = unsafe { libc::sysconf(_SC_NPROCESSORS_ONLN) };
+
+    cmp::max(count, 1) as usize
 }
