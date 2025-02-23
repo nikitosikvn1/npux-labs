@@ -12,3 +12,16 @@ tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 
 [build-dependencies]
 prost-build = "0.13.5"
+
+[features]
+threadpool = []
+fork_per_connection = []
+prefork = []
+
+[[bin]]
+name = "server"
+path = "src/server.rs"
+
+[[bin]]
+name = "client"
+path = "src/client.rs"
