@@ -1,0 +1,31 @@
+export RUST_LOG := "debug"
+export RUST_BACKTRACE := "full"
+
+@default:
+    just --list
+
+test:
+    cargo test --tests -- --show-output
+
+test-all:
+    cargo test --tests -- --show-output --include-ignored
+
+run-server feature = "" socket_addr = "127.0.0.1:7878" dir = "./data":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "Log level: {{RUST_LOG}}"
+    if [ -n "{{feature}}" ]; then
+        echo "Running server with \"{{feature}}\" feature enabled";
+        cargo run --bin server --features {{feature}} -- --socket_addr {{socket_addr}} --dir {{dir}};
+    else
+        echo "No features enabled";
+        cargo run --bin server -- --socket_addr {{socket_addr}} --dir {{dir}};
+    fi
+
+run-client socket_addr = "127.0.0.1:7878" file = "test.txt" dir = "~/Downloads":
+    @echo "Log level: {{RUST_LOG}}"
+    cargo run --bin client -- --socket_addr {{socket_addr}} --file {{file}} --dir {{dir}}
+
+show-processes pid:
+    @echo "Processes tree for PID {{pid}}:"
+    @pstree -p {{pid}} | rg -o "[0-9]+" | xargs -I{} ps --no-headers -o pid,ppid,stat,cmd -p {}
