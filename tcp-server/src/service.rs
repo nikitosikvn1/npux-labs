@@ -258,14 +258,6 @@ impl FileTransferClient {
         self.write_message(&query)?;
 
         let response: FileResponse = self.read_message()?;
-        if let Some(Response::Error(err)) = &response.response {
-            let message: String = format!(
-                "Server returned an error: kind={:?}, message={}",
-                err.kind, err.message
-            );
-
-            Err(io::Error::new(io::ErrorKind::Other, message))?;
-        }
 
         Ok(response)
     }
