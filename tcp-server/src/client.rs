@@ -41,6 +41,11 @@ fn run_client(args: &Args) -> io::Result<()> {
         Some(Response::Metadata(metadata)) => {
             tracing::info!(?metadata, "Received file metadata");
 
+            if metadata.status == Status::NotFound as i32 {
+                tracing::error!("File not found on the server");
+                return Ok(());
+            }
+
             if metadata.file_size > args.max_file_size {
                 tracing::error!(
                     "File size ({}) exceeds the maximum allowed size ({})",
